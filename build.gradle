@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = "com.tinyrye"
+version = "1.0.0-SNAPSHOT"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	compile "com.google.android:android:4.1.1.4"
+	compile "com.tinyrye:io-operations:1.0.0-SNAPSHOT"
+}
