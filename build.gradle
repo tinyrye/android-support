@@ -16,3 +16,7 @@ dependencies {
 	compile "com.google.android:android:4.1.1.4"
 	compile "com.tinyrye:io-operations:1.0.0-SNAPSHOT"
 }
+
+task wrapper(type:Wrapper) {
+	gradleVersion = "2.1"
+}
