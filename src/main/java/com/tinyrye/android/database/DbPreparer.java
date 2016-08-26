@@ -1,5 +1,8 @@
 package com.tinyrye.android.database;
 
+import static org.apache.commons.io.FileUtils.copyFile;
+import static org.apache.commons.io.FileUtils.forceMkdirParent;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -9,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
-import com.tinyrye.io.FileCopy;
+import com.softwhistle.io.Operations;
 
 public class DbPreparer
 {
@@ -46,11 +49,15 @@ public class DbPreparer
 		File currentDbFile = context.getDatabasePath(dbName);
 		File restoreDbFile = new File(String.format("%s/app-data/%s.restore", Environment.getExternalStorageDirectory().getAbsolutePath(), dbName));
 		Log.d(getClass().getName(), String.format("Looking for backup file to restore: %s", restoreDbFile.getAbsolutePath()));
-		if (restoreDbFile.exists()) {
+		if (restoreDbFile.exists())
+		{
 			Log.d(getClass().getName(), String.format("Restoring from backup: %s", restoreDbFile.getAbsolutePath()));
 			try {
-				new FileCopy(restoreDbFile, currentDbFile).autoCreateDestination().closeQuietly().run();
-				restoreDbFile.delete();
+				Operations.run(() -> {
+					forceMkdirParent(currentDbFile);
+					copyFile(restoreDbFile, currentDbFile);
+					restoreDbFile.delete();
+				});
 			} 
 			catch (RuntimeException ex) { Log.e(getClass().getName(), "Failed to restore database", ex); }
 		}
@@ -68,11 +75,17 @@ public class DbPreparer
 		return this;
 	}
 
-	public DbPreparer backupToPublic() {
+	public DbPreparer backupToPublic()
+	{
 		File sourceDbFile = context.getDatabasePath(dbName);
 		File destinationDbFile = new File(String.format("%s/app-data/%s.backup", Environment.getExternalStorageDirectory().getAbsolutePath(), dbName));
 		Log.d(getClass().getName(), String.format("Backing up DB: %s; destinationDbFile=%s", dbName, destinationDbFile.getAbsolutePath()));
-		try { new FileCopy(sourceDbFile, destinationDbFile).autoCreateDestination().closeQuietly().run(); } 
+		try {
+			Operations.run(() -> {
+				forceMkdirParent(destinationDbFile);
+				copyFile(sourceDbFile, destinationDbFile);
+			});
+		}
 		catch (RuntimeException ex) { Log.e(getClass().getName(), "Failed to backup database", ex); }
 		return this;
 	}

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,8 +19,8 @@ import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.tinyrye.io.InputStreamToString;
-import com.tinyrye.io.ResourceLoader;
+import org.apache.commons.io.IOUtils;
+import com.softwhistle.io.Operations;
 
 import com.tinyrye.android.util.TieredComparison;
 
@@ -148,10 +149,8 @@ public class DbMigrator
 	}
 
 	private String readMigrationScript(final AssetManager migrationProvider, final String migrationDirectory, final String scriptFileName) {
-		return new InputStreamToString(new ResourceLoader<InputStream>() {
-					@Override protected void load() throws IOException {
-						set(migrationProvider.open(migrationDirectory + "/" + scriptFileName));
-					}
-				}).runToString();
+		return Operations.openThenWith(
+			() -> migrationProvider.open(migrationDirectory + "/" + scriptFileName),
+			(str) -> IOUtils.toString(str, Charset.defaultCharset()));
 	}
 }
