@@ -115,18 +115,15 @@ public class DbMigrator
 		return new Integer[] { Integer.valueOf(scriptNameMatch.group(1)), Integer.valueOf(scriptNameMatch.group(2)) };
 	}
 
-	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion)
-	{
-		for (final Migration migration: migrations)
-		{
+	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+		for (final Migration migration: migrations) {
 			if (migration.version > oldVersion && migration.version <= newVersion) {
 				runMigration(db, migration);
 			}
 		}
 	}
 
-	public void runAll(final SQLiteDatabase db)
-	{
+	public void runAll(final SQLiteDatabase db) {
 		for (final Migration migration: migrations) {
 			runMigration(db, migration);
 		}
