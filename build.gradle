@@ -8,7 +8,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 task nuttin {
-	println "ajakflaf"
+	println "hello world"
 }
 
 repositories {
