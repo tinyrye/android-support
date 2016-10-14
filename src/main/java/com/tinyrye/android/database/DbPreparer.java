@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
+import com.softwhistle.io.ErrorHandler;
 import com.softwhistle.io.Operations;
 
 public class DbPreparer
@@ -80,13 +81,13 @@ public class DbPreparer
 		File sourceDbFile = context.getDatabasePath(dbName);
 		File destinationDbFile = new File(String.format("%s/app-data/%s.backup", Environment.getExternalStorageDirectory().getAbsolutePath(), dbName));
 		Log.d(getClass().getName(), String.format("Backing up DB: %s; destinationDbFile=%s", dbName, destinationDbFile.getAbsolutePath()));
-		try {
-			Operations.run(() -> {
-				forceMkdirParent(destinationDbFile);
-				copyFile(sourceDbFile, destinationDbFile);
-			});
-		}
-		catch (RuntimeException ex) { Log.e(getClass().getName(), "Failed to backup database", ex); }
+		Operations.run(() -> {
+			forceMkdirParent(destinationDbFile);
+			copyFile(sourceDbFile, destinationDbFile);
+		}, (ex, phase) -> {
+			Log.e(getClass().getName(), "Failed to backup database", ex);
+			return false;
+		});
 		return this;
 	}
 

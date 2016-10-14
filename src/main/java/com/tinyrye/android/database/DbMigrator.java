@@ -146,7 +146,7 @@ public class DbMigrator
 	}
 
 	private String readMigrationScript(final AssetManager migrationProvider, final String migrationDirectory, final String scriptFileName) {
-		return Operations.openThenWith(
+		return Operations.openAndTransform(
 			() -> migrationProvider.open(migrationDirectory + "/" + scriptFileName),
 			(str) -> IOUtils.toString(str, Charset.defaultCharset()));
 	}
