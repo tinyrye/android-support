@@ -14,7 +14,7 @@ repositories {
 
 install {
     repositories.mavenInstaller {
-        pom.artifactId = 'android-support'
+        pom.artifactId = 'softwhistle-android-support'
     }
 }
 
